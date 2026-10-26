@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Sổ Hẹn Tiệm Nail</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Bố cục: điện thoại trước tiên. 3 mục chọn ở đáy màn hình (Lịch hẹn, Doanh thu, Cài đặt).
+   Màn hình rộng: thanh chọn mục chuyển sang cột bên trái. */
+:root {
+  --bg: #f7f3f6;          /* nền hồng xám rất nhạt */
+  --surface: #ffffff;
+  --ink: #2b1f2c;         /* chữ chính: tím than */
+  --ink-2: #4d3f4f;
+  --muted: #7a6c7c;
+  --line: #e9e0e8;
+  --accent: #b42866;      /* màu sơn móng: hồng mận */
+  --accent-ink: #ffffff;
+  --accent-soft: #fbe7f0;
+  --ok: #217a4a;  --ok-soft: #e3f3ea;
+  --warn: #a35d00; --warn-soft: #fdf0dc;
+  --bad: #c03a2b; --bad-soft: #fde8e5;
+  --shadow: 0 18px 40px -22px rgba(60, 20, 45, .45);
+  --r: 14px; --r-sm: 10px;
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --side: 220px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #18131a; --surface: #231c25; --ink: #f3ecf4; --ink-2: #d9ccdb; --muted: #ad9fb0; --line: #3a2f3d;
+    --accent: #f06aa6; --accent-ink: #2a0d1c; --accent-soft: #3d2030;
+    --ok: #5fd08f; --ok-soft: #1c3426; --warn: #f2b45a; --warn-soft: #3a2c16; --bad: #ff8a7a; --bad-soft: #3d1f1b;
+    --shadow: 0 18px 40px -22px rgba(0,0,0,.8); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #18131a; --surface: #231c25; --ink: #f3ecf4; --ink-2: #d9ccdb; --muted: #ad9fb0; --line: #3a2f3d;
+  --accent: #f06aa6; --accent-ink: #2a0d1c; --accent-soft: #3d2030;
+  --ok: #5fd08f; --ok-soft: #1c3426; --warn: #f2b45a; --warn-soft: #3a2c16; --bad: #ff8a7a; --bad-soft: #3d1f1b;
+  --shadow: 0 18px 40px -22px rgba(0,0,0,.8); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--font); -webkit-text-size-adjust: 100%; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; line-height: 1.25; text-wrap: balance; }
+p { margin: 0; }
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+svg.i { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Đầu trang ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top-row { display: flex; align-items: center; gap: 12px; min-height: 58px; max-width: 920px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.brand-dot { width: 28px; height: 34px; flex: none; }
+.brand b { font-size: 1.08rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.save-state { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); white-space: nowrap; }
+.save-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.save-state.busy i { background: var(--warn); }
+.save-state.err i { background: var(--bad); }
+
+/* ---------- Thanh chọn trang ---------- */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.tabs button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 62px; font-size: .74rem; font-weight: 600; color: var(--muted); }
+.tabs button.on { color: var(--accent); }
+.tabs button.on svg.i { stroke-width: 2.3; }
+
+.view { max-width: 920px; margin: 0 auto; padding-block: 18px 110px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+.fab { position: fixed; z-index: 24; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  display: inline-flex; align-items: center; gap: 8px; padding: 15px 22px; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+  font-weight: 700; font-size: 1rem; box-shadow: var(--shadow); }
+.fab svg.i { stroke-width: 2.4; }
+
+@media (min-width: 900px) {
+  .tabs { top: 0; right: auto; width: var(--side); grid-template-columns: 1fr; align-content: start; gap: 4px; padding: 76px 12px 20px; border-top: 0; border-right: 1px solid var(--line); z-index: 15; }
+  .tabs button { flex-direction: row; justify-content: flex-start; gap: 12px; min-height: 48px; padding: 0 14px; border-radius: 10px; font-size: .95rem; }
+  .tabs button.on { background: var(--accent-soft); }
+  .top { z-index: 26; }
+  .top-row, .view { max-width: none; margin-left: var(--side); }
+  .view { padding-left: 36px; padding-right: 36px; padding-bottom: 110px; max-width: calc(980px + var(--side)); }
+}
+
+/* ---------- Khối chung ---------- */
+.page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.page-head h1 { font-size: 1.55rem; }
+.block { display: grid; gap: 10px; }
+.block-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.block-head h2 { font-size: 1.1rem; }
+.link-btn { color: var(--accent); font-weight: 600; font-size: .92rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.list { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.list > * + * { border-top: 1px solid var(--line); }
+.empty { padding: 22px 18px; text-align: center; color: var(--muted); font-size: .95rem; display: grid; gap: 10px; justify-items: center; }
+.empty b { color: var(--ink); font-size: 1rem; }
+.notice { padding: 12px 14px; border-radius: var(--r-sm); background: var(--warn-soft); color: var(--ink); font-size: .9rem; display: flex; gap: 10px; align-items: flex-start; }
+.notice.info { background: var(--accent-soft); }
+
+/* Nút */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 12px; font-weight: 600; font-size: .95rem; border: 1.5px solid transparent; white-space: nowrap; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-main { background: var(--accent); color: var(--accent-ink); }
+.btn-ink { background: var(--ink); color: var(--surface); }
+.btn-line { background: var(--surface); border-color: var(--line); }
+.btn-line:hover { border-color: var(--ink-2); }
+.btn-soft { background: var(--accent-soft); color: var(--accent); }
+.btn-danger { background: var(--bad); color: #fff; }
+.btn-cancel { background: var(--surface); border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); color: var(--bad); }
+.btn-cancel:hover { background: var(--bad-soft); }
+.btn-sm { min-height: 38px; padding: 0 12px; font-size: .86rem; border-radius: 10px; }
+.btn-block { width: 100%; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Ô tìm kiếm lớn */
+.search { position: relative; }
+.search svg.i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.search > input[type="search"] { width: 100%; min-height: 54px; padding: 0 16px 0 48px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); font-size: 1.02rem; outline: none; }
+.search > input[type="search"]:focus { border-color: var(--accent); }
+
+/* Số liệu nhanh */
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; display: grid; gap: 2px; min-width: 0; }
+.kpi span { font-size: .8rem; color: var(--muted); }
+.kpi b { font-size: 1.3rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.kpi small { font-size: .78rem; color: var(--muted); }
+
+/* Dòng khách */
+.row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; width: 100%; text-align: left; min-height: 64px; }
+button.row:hover { background: color-mix(in srgb, var(--accent-soft) 45%, transparent); }
+.av { width: 42px; height: 42px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700; background: var(--accent-soft); color: var(--accent); }
+.row-main { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.row-main b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-main span { font-size: .86rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-side { text-align: right; font-size: .86rem; color: var(--muted); flex: none; display: grid; gap: 2px; justify-items: end; }
+.row-side b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: 2px; }
+.tag.gift { background: var(--ok-soft); color: var(--ok); }
+.tag.warn { background: var(--warn-soft); color: var(--warn); }
+.tag.muted { background: var(--bg); color: var(--muted); }
+
+/* Lịch hẹn */
+.appt { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 12px 14px; }
+.appt-time { font-weight: 700; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.appt-main { display: grid; gap: 6px; min-width: 0; }
+.appt-main b { font-weight: 600; }
+.appt-main .muted { font-size: .88rem; }
+.appt.done { opacity: .6; }
+.appt.cancel .appt-main b { text-decoration: line-through; }
+.status { font-size: .74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.st-hen { background: var(--accent-soft); color: var(--accent); }
+.st-den { background: var(--ok-soft); color: var(--ok); }
+.st-huy { background: var(--bg); color: var(--muted); }
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.day { display: grid; justify-items: center; gap: 2px; padding: 8px 0; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); font-size: .78rem; color: var(--muted); }
+.day b { font-size: 1.05rem; color: var(--ink); }
+.day i { font-style: normal; font-weight: 700; color: var(--accent); min-height: 1.2em; }
+.day.on { border-color: var(--accent); background: var(--accent-soft); }
+.day.today b { color: var(--accent); }
+.date-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.date-nav .icon-btn { width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); display: grid; place-items: center; }
+.date-nav input { min-height: 44px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); padding: 0 10px; }
+
+/* Chăm sóc khách */
+.care { display: flex; gap: 12px; align-items: center; padding: 12px 14px; }
+.care-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+.care-ic.bd { background: var(--accent-soft); color: var(--accent); }
+.care-ic.cb { background: var(--warn-soft); color: var(--warn); }
+.care-ic.pr { background: var(--ok-soft); color: var(--ok); }
+.care-ic.gf { background: var(--ok-soft); color: var(--ok); }
+
+/* Bộ lọc dạng chip */
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-size: .88rem; font-weight: 500; white-space: nowrap; }
+.chip.on { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.chip span { opacity: .65; margin-left: 4px; }
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.toolbar select { min-height: 42px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); padding: 0 10px; }
+
+/* Thẻ tích điểm: mỗi lần đến là một chấm sơn */
+.stamp-card { display: grid; gap: 8px; padding: 14px; border-radius: var(--r); background: var(--accent-soft); }
+.stamp-card .head { display: flex; justify-content: space-between; gap: 8px; font-size: .9rem; }
+.stamps { display: flex; flex-wrap: wrap; gap: 6px; }
+.stamps i { width: 24px; height: 30px; border-radius: 12px 12px 10px 10px; border: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); background: var(--surface); }
+.stamps i.on { background: var(--accent); border-color: var(--accent); }
+.stamp-card.ready { background: var(--ok-soft); }
+.stamp-card.ready .stamps i.on { background: var(--ok); border-color: var(--ok); }
+
+/* ---------- Bảng trượt (sheet) ---------- */
+.sheet-wrap { position: fixed; inset: 0; z-index: 50; background: rgba(25, 10, 22, .5); display: flex; align-items: flex-end; justify-content: center; animation: fade .16s; }
+.sheet { width: 100%; max-width: 640px; max-height: 92vh; overflow-y: auto; background: var(--bg); border-radius: 20px 20px 0 0;
+  padding: 0 max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); animation: rise .2s ease-out; }
+.sheet-head { position: sticky; top: 0; z-index: 2; background: var(--bg); display: flex; align-items: center; gap: 10px; padding: 16px 0 12px; }
+.sheet-head h2 { flex: 1; font-size: 1.2rem; min-width: 0; overflow-wrap: anywhere; }
+.x-btn { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); flex: none; }
+.sheet-body { display: grid; gap: 16px; }
+.sheet-foot { position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); background: var(--bg); padding: 12px 0 calc(20px + env(safe-area-inset-bottom, 0px)); margin-bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); display: flex; gap: 8px; border-top: 1px solid var(--line); margin-top: 6px; }
+.sheet-foot .btn { flex: 1; }
+@media (min-width: 700px) {
+  .sheet-wrap { align-items: center; padding: 24px; }
+  .sheet { border-radius: 20px; max-height: 88vh; padding-left: 24px; padding-right: 24px; }
+}
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { transform: translateY(30px); opacity: .6; } }
+
+/* ---------- Ô nhập ---------- */
+.field { display: grid; gap: 6px; min-width: 0; }
+.field > label, .field-label { font-size: .88rem; font-weight: 600; }
+.field input, .field select, .field textarea { width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); outline: none; }
+.field textarea { min-height: 84px; resize: vertical; line-height: 1.45; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+.field .hint { font-size: .8rem; color: var(--muted); }
+.field .err { font-size: .82rem; color: var(--bad); font-weight: 600; }
+.field .err:empty { display: none; }
+.field.bad input, .field.bad textarea { border-color: var(--bad); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface); border: 1.5px solid var(--line); }
+.seg button { min-height: 40px; border-radius: 9px; font-weight: 600; font-size: .9rem; color: var(--muted); }
+.seg button.on { background: var(--ink); color: var(--surface); }
+.check { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: .95rem; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+/* Chọn khách trong form */
+.picked { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1.5px solid var(--accent); }
+.picked .row-main span { white-space: normal; }
+.suggest { display: grid; }
+.suggest:empty { display: none; }
+
+/* Dịch vụ dạng chip */
+.svc-group { display: grid; gap: 8px; }
+.svc-group h3 { font-size: .84rem; color: var(--muted); font-weight: 600; }
+.svc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.svc { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 8px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); text-align: left; min-height: 52px; }
+.svc b { font-weight: 600; font-size: .9rem; }
+.svc span { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.svc.on { border-color: var(--accent); background: var(--accent-soft); }
+.svc.on span { color: var(--accent); }
+.items { display: grid; gap: 8px; }
+.item { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.item b { font-weight: 600; font-size: .92rem; min-width: 0; overflow-wrap: anywhere; }
+.item input { width: 100px; min-height: 40px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--bg); padding: 0 8px; text-align: right; font-variant-numeric: tabular-nums; }
+.qty { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 9px; }
+.qty button { width: 34px; height: 38px; font-size: 1.1rem; font-weight: 700; }
+.qty span { min-width: 22px; text-align: center; font-weight: 700; }
+.total { display: flex; justify-content: space-between; align-items: baseline; font-size: 1.05rem; }
+.total b { font-size: 1.5rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* Chi tiết khách */
+.cust-head { display: flex; gap: 14px; align-items: center; }
+.cust-head .av { width: 56px; height: 56px; font-size: 1.3rem; }
+.contact { display: flex; gap: 8px; flex-wrap: wrap; }
+.contact .btn { flex: 1; min-width: 100px; }
+.phone-big { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; user-select: all; }
+.note-box { padding: 12px 14px; border-radius: var(--r-sm); background: var(--warn-soft); white-space: pre-wrap; font-size: .95rem; }
+.stat3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat3 div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; min-width: 0; }
+.stat3 span { font-size: .78rem; color: var(--muted); }
+.stat3 b { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.visit { padding: 12px 14px; display: grid; gap: 4px; }
+.visit-top { display: flex; justify-content: space-between; gap: 10px; }
+.visit-top b { font-variant-numeric: tabular-nums; }
+.visit .muted { font-size: .88rem; }
+.visit-acts { display: flex; gap: 14px; }
+.visit-acts button { font-size: .84rem; color: var(--muted); text-decoration: underline; min-height: 32px; }
+
+/* Báo cáo */
+.chart { width: 100%; height: auto; display: block; }
+.c-bar { fill: var(--accent); }
+.c-bar.zero { fill: var(--line); }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-txt { fill: var(--muted); font-size: 11px; font-family: var(--font); }
+.c-val { fill: var(--ink); font-size: 11px; font-weight: 700; font-family: var(--font); }
+.hbar { display: grid; grid-template-columns: minmax(90px, 34%) 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; font-size: .92rem; }
+.hbar span { min-width: 0; overflow-wrap: anywhere; }
+.hbar .track { height: 10px; border-radius: 5px; background: var(--bg); overflow: hidden; }
+.hbar .track i { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+.hbar b { font-variant-numeric: tabular-nums; text-align: right; }
+
+/* Cài đặt */
+.set-sec { display: grid; gap: 12px; padding: 16px; }
+.set-sec h2 { font-size: 1.05rem; }
+.svc-edit { display: grid; grid-template-columns: 1fr 110px 44px; gap: 8px; align-items: center; }
+.svc-edit input, .svc-edit select { min-height: 44px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); padding: 0 10px; width: 100%; min-width: 0; }
+.svc-edit .price { text-align: right; font-variant-numeric: tabular-nums; }
+.svc-edit .del { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: var(--muted); border: 1.5px solid var(--line); }
+.svc-edit .remind { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; font-size: .84rem; color: var(--muted); }
+.svc-edit .remind input { width: 70px; min-height: 36px; }
+.svc-list { display: grid; gap: 14px; }
+.svc-list h3 { font-size: .9rem; }
+.staff-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.staff-chips span { display: inline-flex; align-items: center; gap: 4px; padding: 6px 6px 6px 12px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); font-size: .9rem; }
+.staff-chips button { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
+
+/* Thông báo nhỏ */
+.toasts { position: fixed; z-index: 80; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); width: min(440px, calc(100% - 32px)); display: grid; gap: 8px; pointer-events: none; }
+.toast { background: var(--ink); color: var(--surface); padding: 12px 16px; border-radius: 12px; font-size: .92rem; box-shadow: var(--shadow); animation: rise .2s; transition: opacity .3s; }
+.toast.bad { background: var(--bad); color: #fff; }
+.toast.hide { opacity: 0; }
+@media (min-width: 900px) { .toasts { bottom: 28px; left: calc(50% + var(--side) / 2); } }
+
+#hNotice:empty, #hFound:empty, .notices:empty { display: none; }
+.notices { display: grid; gap: 8px; }
+.add-big { min-height: 54px; font-size: 1.02rem; border-radius: 14px; }
+.ap { display: grid; gap: 8px; padding: 14px; }
+.ap-top { display: flex; align-items: baseline; gap: 12px; }
+.ap-time { font-weight: 700; font-size: 1.25rem; font-variant-numeric: tabular-nums; min-width: 58px; }
+.ap-name { flex: 1; min-width: 0; font-weight: 600; font-size: 1.05rem; overflow-wrap: anywhere; }
+.ap-svcs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ap-svcs span { font-size: .82rem; padding: 3px 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); }
+.ap-phone { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ap-phone .phone-big { font-size: 1.05rem; }
+.call-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 42px; padding: 0 16px; border-radius: 999px; background: var(--ok); color: #fff; font-weight: 700; text-decoration: none; }
+:root[data-theme="dark"] .call-btn { color: #0e2416; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .call-btn { color: #0e2416; } }
+.ap.xong { background: color-mix(in srgb, var(--ok-soft) 55%, var(--surface)); }
+.ap.huy .ap-name, .ap.huy .ap-time { text-decoration: line-through; color: var(--muted); }
+.paid { font-weight: 700; color: var(--ok); }
+.money-in { width: 100%; min-height: 60px; border-radius: 14px; border: 2px solid var(--accent); background: var(--surface); padding: 0 16px; font-size: 1.6rem; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; outline: none; }
+.day-sum { display: flex; justify-content: space-between; gap: 10px; padding: 10px 14px; background: var(--bg); font-weight: 600; font-size: .92rem; }
+.rv-row { display: grid; grid-template-columns: 52px 1fr auto; gap: 10px; padding: 10px 14px; align-items: start; }
+.rv-row b { font-variant-numeric: tabular-nums; }
+.rv-row .t { color: var(--muted); font-variant-numeric: tabular-nums; }
+.rv-row .who { min-width: 0; display: grid; }
+.rv-row .who span { font-size: .86rem; color: var(--muted); overflow-wrap: anywhere; }
+.total-card { padding: 16px; display: grid; gap: 4px; }
+.total-card span { color: var(--muted); font-size: .9rem; }
+.total-card b { font-size: 2rem; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.loading { display: grid; place-items: center; gap: 12px; padding: 80px 16px; color: var(--muted); }
+.spin { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 420px) {
+  .kpis { grid-template-columns: 1fr 1fr; }
+  .kpis .kpi:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .grid2 { grid-template-columns: 1fr; }
+  .svc-edit { grid-template-columns: 1fr 96px 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand">
+      <svg class="brand-dot" viewBox="0 0 28 34" aria-hidden="true"><rect x="9" y="1" width="10" height="9" rx="2" fill="var(--ink)"/><rect x="3" y="10" width="22" height="23" rx="8" fill="var(--accent)"/><rect x="7" y="15" width="4" height="10" rx="2" fill="var(--surface)" opacity=".55"/></svg>
+      <b id="shopName">Sổ khách</b>
+    </div>
+    <span class="save-state" id="saveState" aria-live="polite"><i></i><span>Đang mở</span></span>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs" aria-label="Chọn trang"></nav>
+<main class="view" id="view" aria-live="polite">
+  <div class="loading"><div class="spin"></div><span>Đang mở sổ khách…</span></div>
+</main>
+<div id="sheets"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<input type="file" id="fileIn" accept=".json,application/json" hidden>
+
+<script>
+"use strict";
+/* =====================================================================
+   SỔ HẸN TIỆM NAIL & GỘI ĐẦU
+   3 mục: Lịch hẹn, Doanh thu, Cài đặt
+   - Mở trên Claude: dữ liệu lưu chung trên mạng (nhiều máy cùng xem)
+   - Mở file riêng / trang web riêng: dữ liệu lưu trong trình duyệt của máy đó
+   Cách dùng: đặt lịch -> khách làm xong bấm "Xong, ghi tiền" -> tiền cộng vào doanh thu
+   ===================================================================== */
+(function () {
+
+/* ---------------- Tiện ích ---------------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const p2 = n => String(n).padStart(2, "0");
+const dstr = d => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+const today = () => dstr(new Date());
+const toDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = toDate(s); d.setDate(d.getDate() + n); return dstr(d); };
+const diffDays = (a, b) => Math.round((toDate(b) - toDate(a)) / 864e5);
+const WD = ["Chủ nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+const WDS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+const fmtD = s => { const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+const fmtDS = s => { const [, m, d] = s.split("-"); return `${d}/${m}`; };
+const money = n => (Math.round(Number(n) || 0)).toLocaleString("vi-VN") + "đ";
+const moneyShort = n => n >= 1e6 ? (Math.round(n / 1e5) / 10).toLocaleString("vi-VN") + "tr" : n >= 1e3 ? Math.round(n / 1e3) + "k" : String(Math.round(n));
+const normPhone = s => { let d = String(s || "").replace(/\D/g, ""); if (d.startsWith("84") && d.length >= 11) d = "0" + d.slice(2); return d; };
+const fmtPhone = p => p && p.length === 10 ? `${p.slice(0, 4)} ${p.slice(4, 7)} ${p.slice(7)}` : (p || "");
+const clone = o => JSON.parse(JSON.stringify(o));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+// Đọc số tiền gõ kiểu Việt Nam ("60.000", "60,000", "60000") thành số nguyên
+const toInt = v => parseInt(String(v ?? "").replace(/\D/g, ""), 10) || 0;
+
+/* ---------------- Biểu tượng ---------------- */
+const IC = {
+  cal: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.6a7 7 0 0 0-2 1.2L5.4 5.9l-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.4-.9a7 7 0 0 0 2 1.2l.4 2.6h4l.4-2.6a7 7 0 0 0 2-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  left: '<path d="m15 5-7 7 7 7"/>',
+  right: '<path d="m9 5 7 7-7 7"/>',
+  phone: '<path d="M5 4h3l1.5 4-2 1.3a10 10 0 0 0 7.2 7.2L16 14.5l4 1.5v3a1.8 1.8 0 0 1-2 1.8A16 16 0 0 1 3.2 6 1.8 1.8 0 0 1 5 4z"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ""}</svg>`;
+
+/* ---------------- Bảng giá mặc định (sửa được trong Cài đặt) ---------------- */
+const GROUPS = { nail: "Làm móng", goi: "Gội đầu" };
+const DEFAULT_SERVICES = [
+  { id: "n1", group: "nail", name: "Sơn thường", price: 60000 },
+  { id: "n2", group: "nail", name: "Sơn gel", price: 120000 },
+  { id: "n3", group: "nail", name: "Úp móng", price: 200000 },
+  { id: "n4", group: "nail", name: "Đắp bột", price: 250000 },
+  { id: "n5", group: "nail", name: "Vẽ, đính đá", price: 50000 },
+  { id: "n6", group: "nail", name: "Cắt da, dũa móng", price: 40000 },
+  { id: "g1", group: "goi", name: "Gội đầu dưỡng sinh", price: 80000 },
+  { id: "g2", group: "goi", name: "Gội sấy", price: 50000 },
+  { id: "g3", group: "goi", name: "Gội + massage cổ vai gáy", price: 120000 }
+];
+const SHOP = "Tiệm Nail & Gội đầu";
+
+/* =====================================================================
+   LƯU TRỮ
+   appts/<ngày>  : các lịch hẹn của một ngày
+   config/main   : bảng giá dịch vụ
+   ===================================================================== */
+const LS_KEY = "so-hen-tiem-v1";
+const DB = { mode: "loading", readOnly: false, appts: {}, config: null, pending: 0, cloudMissing: false, storageBroken: false };
+let cloud = null, downloads = null, DER = null, renderQueued = false;
+
+function services() {
+  const s = DB.config && Array.isArray(DB.config.services) ? DB.config.services : DEFAULT_SERVICES;
+  return s.filter(x => GROUPS[x.group]);
+}
+
+function changed() { DER = null; if (renderQueued) return; renderQueued = true; requestAnimationFrame(() => { renderQueued = false; renderAll(); }); }
+
+function setSave(state) {
+  const el = $("#saveState"); if (!el) return;
+  const txt = state === "busy" ? "Đang lưu…" : state === "err" ? "Chưa lưu được" : DB.mode === "cloud" ? (DB.readOnly ? "Chỉ xem" : "Đã lưu") : "Lưu trên máy này";
+  el.className = "save-state " + (state === "busy" ? "busy" : state === "err" ? "err" : "");
+  el.querySelector("span").textContent = txt;
+}
+
+function localLoad() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { const o = JSON.parse(raw); DB.appts = o.appts || {}; DB.config = o.config || null; }
+  } catch (e) { DB.storageBroken = true; }
+}
+function localSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ appts: DB.appts, config: DB.config })); setSave("ok"); }
+  catch (e) { setSave("err"); toast("Không lưu được vào máy này (bộ nhớ trình duyệt đầy hoặc bị chặn). Vào Cài đặt, tải file sao lưu ngay.", "bad"); }
+}
+
+const queues = {};
+function cloudWrite(path, data) {
+  DB.pending++; setSave("busy");
+  const run = async () => {
+    const ref = cloud.doc(path);
+    for (let attempt = 0; ; attempt++) {
+      try { if (data) await ref.set(data); else await ref.delete(); return; }
+      catch (e) {
+        const code = e && e.code;
+        if ((code === "unavailable" || code === "resource_exhausted") && attempt < 3) { await sleep(500 * (attempt + 1) + Math.random() * 500); continue; }
+        throw e;
+      }
+    }
+  };
+  const p = (queues[path] || Promise.resolve()).catch(() => {}).then(run);
+  queues[path] = p;
+  p.then(() => { DB.pending--; if (!DB.pending) setSave("ok"); }, e => {
+    DB.pending--; setSave("err");
+    const code = e && e.code;
+    if (code === "invalid_argument" || code === "not_granted") {
+      DB.readOnly = true; changed();
+      toast("Bạn đang mở sổ ở quyền chỉ xem nên không lưu được. Nhờ người tạo sổ chia sẻ quyền sửa cho bạn.", "bad");
+    } else if (code === "quota_exceeded") toast("Sổ đã đầy dung lượng. Hãy tải file sao lưu rồi xóa bớt lịch cũ.", "bad");
+    else toast("Chưa lưu được vì mất mạng. Kiểm tra mạng rồi làm lại thao tác vừa rồi.", "bad");
+  });
+  return p;
+}
+
+/* Ghi một mục: kind = appts | config; data = null để xóa */
+function put(kind, id, data) {
+  if (DB.readOnly) { toast("Bạn chỉ có quyền xem sổ này, không sửa được.", "bad"); return false; }
+  if (kind === "config") DB.config = data;
+  else if (data) DB[kind] = { ...DB[kind], [id]: data };
+  else { const m = { ...DB[kind] }; delete m[id]; DB[kind] = m; }
+  changed();
+  if (DB.mode === "local") localSave();
+  else cloudWrite(kind === "config" ? "config/main" : `${kind}/${id}`, data);
+  return true;
+}
+
+async function startCloud(db) {
+  cloud = db; DB.mode = "cloud";
+  await new Promise(resolve => {
+    let left = 2;
+    const firstDone = () => { if (--left === 0) resolve(); };
+    const onErr = e => {
+      if (e && e.code === "revoked") { DB.readOnly = true; changed(); }
+      else toast("Mất kết nối với sổ chung. Tải lại trang để kết nối lại.", "bad");
+    };
+    let first = true;
+    db.collection("appts").onSnapshot(snap => {
+      const m = {}; snap.docs.forEach(d => { m[d.id] = d.data(); });
+      DB.appts = m; changed();
+      if (first) { first = false; firstDone(); }
+    }, e => { onErr(e); if (first) { first = false; firstDone(); } });
+    let firstC = true;
+    db.doc("config/main").onSnapshot(s => {
+      DB.config = s.exists ? s.data() : null; changed();
+      if (firstC) { firstC = false; firstDone(); }
+    }, e => { onErr(e); if (firstC) { firstC = false; firstDone(); } });
+    setTimeout(resolve, 9000);
+  });
+}
+
+/* ---------------- Số liệu tính sẵn ---------------- */
+function apptsOf(day) { const d = DB.appts[day]; return d && Array.isArray(d.items) ? d.items : []; }
+function svcList(a) { return Array.isArray(a.services) ? a.services : a.service ? [{ sid: null, name: a.service, price: 0 }] : []; }
+const isDone = a => a.status === "xong" || a.status === "den";
+function der() {
+  if (DER) return DER;
+  const list = [], phones = {};
+  for (const [day, doc] of Object.entries(DB.appts)) {
+    for (const a of (doc && doc.items) || []) {
+      list.push({ day, a });
+      const ph = normPhone(a.phone);
+      if (ph) {
+        const p = phones[ph] || { name: a.name, done: 0, last: "" };
+        if (isDone(a)) p.done++;
+        if (day >= p.last) { p.last = day; p.name = a.name; }
+        phones[ph] = p;
+      }
+    }
+  }
+  DER = { list, phones };
+  return DER;
+}
+
+/* =====================================================================
+   THÔNG BÁO, BẢNG TRƯỢT, HỎI LẠI
+   ===================================================================== */
+function toast(msg, type = "") {
+  const box = $("#toasts");
+  box.innerHTML = ""; // mỗi lúc chỉ hiện một thông báo
+  const t = document.createElement("div");
+  t.className = "toast " + type; t.textContent = msg;
+  box.appendChild(t);
+  setTimeout(() => t.classList.add("hide"), type === "bad" ? 5200 : 2600);
+  setTimeout(() => t.remove(), type === "bad" ? 5600 : 3000);
+}
+
+const sheets = [];
+function openSheet(title, { onClose } = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "sheet-wrap";
+  wrap.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" tabindex="-1">
+    <div class="sheet-head"><h2></h2><button class="x-btn" data-close aria-label="Đóng">${ic("x")}</button></div>
+    <div class="sheet-body"></div></div>`;
+  $(".sheet-head h2", wrap).textContent = title;
+  const api = {
+    el: wrap, body: $(".sheet-body", wrap),
+    close() {
+      const i = sheets.indexOf(api); if (i >= 0) sheets.splice(i, 1);
+      wrap.remove(); if (!sheets.length) document.body.style.overflow = "";
+      if (onClose) onClose();
+    },
+    foot(html) {
+      let f = $(".sheet-foot", wrap);
+      if (!f) { f = document.createElement("div"); f.className = "sheet-foot"; $(".sheet", wrap).appendChild(f); }
+      f.innerHTML = html; return f;
+    }
+  };
+  wrap.addEventListener("click", e => { if (e.target === wrap || e.target.closest("[data-close]")) api.close(); });
+  $("#sheets").appendChild(wrap);
+  sheets.push(api);
+  document.body.style.overflow = "hidden";
+  setTimeout(() => $(".sheet", wrap).focus({ preventScroll: true }), 30);
+  return api;
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape" && sheets.length) sheets[sheets.length - 1].close(); });
+
+function confirmSheet(title, text, okLabel, danger) {
+  return new Promise(resolve => {
+    let answered = false;
+    const s = openSheet(title, { onClose: () => { if (!answered) resolve(false); } });
+    s.body.innerHTML = `<p>${esc(text)}</p>`;
+    const f = s.foot(`<button class="btn btn-line" data-no>Quay lại</button><button class="btn ${danger ? "btn-danger" : "btn-ink"}" data-yes>${esc(okLabel)}</button>`);
+    f.addEventListener("click", e => {
+      if (e.target.closest("[data-yes]")) { answered = true; s.close(); resolve(true); }
+      if (e.target.closest("[data-no]")) { answered = true; s.close(); resolve(false); }
+    });
+  });
+}
+
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); toast("Đã chép số " + text); }
+  catch (e) { toast("Máy không cho chép tự động. Bấm giữ vào số điện thoại để chép."); }
+}
+
+async function saveFile(filename, text, mime) {
+  if (downloads) {
+    try { await downloads.save({ filename, data: text }); return true; }
+    catch (e) { if (e && e.code === "declined") return false; }
+  }
+  try {
+    const blob = new Blob([text], { type: mime });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    return true;
+  } catch (e) { toast("Máy này không tải được file.", "bad"); return false; }
+}
+
+/* ---------------- Ô chọn dịch vụ (dùng khi đặt lịch và khi ghi tiền) ---------------- */
+function svcChipsHtml(selected) {
+  const S = services();
+  return Object.entries(GROUPS).map(([g, gl]) => {
+    const list = S.filter(s => s.group === g);
+    if (!list.length) return "";
+    return `<div class="svc-group"><h3>${gl}</h3><div class="svc-chips">${list.map(s => {
+      const on = selected.some(x => x.sid === s.id);
+      return `<button type="button" class="svc ${on ? "on" : ""}" data-sid="${esc(s.id)}" aria-pressed="${on}"><b>${esc(s.name)}</b><span>${money(s.price)}</span></button>`;
+    }).join("")}</div></div>`;
+  }).join("");
+}
+function toggleSvc(selected, sid) {
+  const k = selected.findIndex(x => x.sid === sid);
+  if (k >= 0) selected.splice(k, 1);
+  else { const s = services().find(x => x.id === sid); if (s) selected.push({ sid: s.id, name: s.name, price: s.price }); }
+}
+
+/* =====================================================================
+   CÁC MỤC
+   ===================================================================== */
+const ROUTES = {
+  lich: { label: "Lịch hẹn", icon: "cal", view: () => viewAppts() },
+  doanhthu: { label: "Doanh thu", icon: "chart", view: () => viewReports() },
+  caidat: { label: "Cài đặt", icon: "gear", view: () => viewSettings() }
+};
+let cur = null, curView = null, ready = false;
+
+function renderTabs() {
+  $("#tabs").innerHTML = Object.entries(ROUTES).map(([k, r]) =>
+    `<button data-go="${k}" class="${k === cur ? "on" : ""}" ${k === cur ? 'aria-current="page"' : ""}>${ic(r.icon)}<span>${r.label}</span></button>`).join("");
+}
+function route() {
+  if (!ready) return;
+  const h = (location.hash || "").slice(1);
+  const name = ROUTES[h] ? h : "lich";
+  if (name !== cur) { cur = name; curView = ROUTES[name].view(); window.scrollTo(0, 0); }
+  else if (curView && curView.update) curView.update();
+  renderTabs();
+}
+function go(name) { if ((location.hash || "").slice(1) === name) route(); else location.hash = name; }
+window.addEventListener("hashchange", route);
+function renderAll() {
+  if (!ready) return;
+  if (curView && curView.update) curView.update();
+  setSave(DB.pending ? "busy" : "ok");
+}
+
+function noticeHtml() {
+  const out = [];
+  if (DB.readOnly) out.push(`<div class="notice">Bạn đang xem sổ ở quyền chỉ xem. Muốn đặt lịch, ghi tiền, hãy nhờ người tạo sổ chia sẻ quyền sửa.</div>`);
+  if (DB.mode === "local" && DB.cloudMissing) out.push(`<div class="notice">Chưa mở được sổ chung trên mạng (có thể bạn chưa đăng nhập Claude). Dữ liệu đang lưu tạm trên máy này.</div>`);
+  if (DB.mode === "local" && DB.storageBroken) out.push(`<div class="notice">Trình duyệt này đang chặn lưu dữ liệu (ví dụ chế độ ẩn danh). Hãy mở bằng Chrome hoặc Safari bình thường để không mất dữ liệu.</div>`);
+  if (DB.mode === "local" && Object.keys(DB.appts).length) {
+    let last = null; try { last = localStorage.getItem(LS_KEY + "-backup"); } catch (e) {}
+    if (!last || diffDays(last, today()) >= 7)
+      out.push(`<div class="notice info"><span>Dữ liệu đang nằm trên máy này. ${last ? `Lần sao lưu gần nhất: ${fmtD(last)}.` : "Bạn chưa sao lưu lần nào."} Nên tải file sao lưu mỗi tuần.</span><button class="btn btn-ink btn-sm" data-backup>Sao lưu</button></div>`);
+  }
+  return out.join("");
+}
+
+/* ---------------- Một lịch hẹn trong danh sách ---------------- */
+function apptCard(day, a) {
+  const st = isDone(a) ? "xong" : a.status === "huy" ? "huy" : "hen";
+  const ph = normPhone(a.phone);
+  const svcs = svcList(a);
+  const est = svcs.reduce((s, x) => s + (Number(x.price) || 0), 0);
+  const ref = `${esc(day)}|${esc(a.id)}`;
+  const ro = DB.readOnly;
+  return `<div class="ap ${st}">
+    <div class="ap-top"><span class="ap-time">${esc(a.time || "--:--")}</span><span class="ap-name">${esc(a.name || "Khách")}</span>
+      <span class="status st-${st === "xong" ? "den" : st}">${st === "xong" ? "Đã làm xong" : st === "huy" ? "Đã hủy" : "Đang hẹn"}</span></div>
+    ${svcs.length ? `<div class="ap-svcs">${svcs.map(x => `<span>${esc(x.name)}</span>`).join("")}${st === "hen" && est ? `<span style="border:0;background:none;color:var(--muted)">khoảng ${money(est)}</span>` : ""}</div>` : ""}
+    ${a.note ? `<span class="muted" style="font-size:.88rem">Ghi chú: ${esc(a.note)}</span>` : ""}
+    ${ph ? `<div class="ap-phone"><span class="phone-big">${esc(fmtPhone(ph))}</span>
+      <a class="call-btn" href="tel:${esc(ph)}" aria-label="Gọi cho ${esc(a.name || "khách")}">${ic("phone")}Gọi</a>
+      <button class="btn btn-line btn-sm" data-copy="${esc(ph)}" aria-label="Chép số điện thoại">${ic("copy")}</button></div>` : ""}
+    ${st === "xong" ? `<div class="ap-phone"><span class="paid">Đã thu ${money(a.amount)}</span>${ro ? "" : `<button class="btn btn-line btn-sm" data-done="${ref}">Sửa tiền</button>`}</div>` : ""}
+    ${ro ? "" : st === "hen" ? `<div class="btn-row">
+        <button class="btn btn-main add-big" style="flex:1 1 100%" data-done="${ref}">${ic("check")}Xong, ghi tiền</button>
+        <button class="btn btn-line" style="flex:1" data-edit="${ref}">Sửa</button>
+        <button class="btn btn-cancel" style="flex:1" data-cancel="${ref}">${ic("x")}Hủy hẹn</button></div>`
+      : st === "huy" ? `<div class="btn-row">
+        <button class="btn btn-main" style="flex:1" data-rebook="${ref}">Đặt lại</button>
+        <button class="btn btn-line" style="flex:1" data-del="${ref}">${ic("trash")}Xóa</button></div>` : ""}
+  </div>`;
+}
+
+/* ---------------- Mục LỊCH HẸN ---------------- */
+function viewAppts() {
+  const v = $("#view");
+  let sel = today();
+  v.innerHTML = `
+    <div class="page-head"><h1>Lịch hẹn</h1></div>
+    <div class="notices" id="aNotice"></div>
+    ${DB.readOnly ? "" : `<button class="btn btn-main btn-block add-big" id="aNew">${ic("plus")}Đặt lịch hẹn mới</button>`}
+    <div class="date-nav">
+      <button class="icon-btn" id="aPrev" aria-label="Tuần trước">${ic("left")}</button>
+      <input type="date" id="aPick" aria-label="Chọn ngày">
+      <button class="icon-btn" id="aNext" aria-label="Tuần sau">${ic("right")}</button>
+      <button class="btn btn-line btn-sm" id="aToday">Hôm nay</button>
+    </div>
+    <div class="week" id="aWeek"></div>
+    <section class="block"><div class="block-head"><h2 id="aTitle"></h2></div><p class="muted" id="aSum" style="font-size:.9rem"></p><div id="aList"></div></section>`;
+  const nb = $("#aNew"); if (nb) nb.onclick = () => apptForm({ date: sel < today() ? today() : sel });
+  $("#aPrev").onclick = () => { sel = addDays(sel, -7); update(); };
+  $("#aNext").onclick = () => { sel = addDays(sel, 7); update(); };
+  $("#aToday").onclick = () => { sel = today(); update(); };
+  $("#aPick").onchange = e => { if (e.target.value) { sel = e.target.value; update(); } };
+  $("#aWeek").onclick = e => { const b = e.target.closest("[data-day]"); if (b) { sel = b.dataset.day; update(); } };
+  function update() {
+    const t = today();
+    $("#aNotice").innerHTML = noticeHtml();
+    $("#aPick").value = sel;
+    const mon = addDays(sel, -((toDate(sel).getDay() + 6) % 7));
+    $("#aWeek").innerHTML = Array.from({ length: 7 }, (_, i) => {
+      const d = addDays(mon, i);
+      const n = apptsOf(d).filter(a => a.status !== "huy").length;
+      return `<button class="day ${d === sel ? "on" : ""} ${d === t ? "today" : ""}" data-day="${d}" aria-label="${WD[toDate(d).getDay()]} ${fmtD(d)}, ${n} lịch hẹn"><span>${WDS[toDate(d).getDay()]}</span><b>${Number(d.slice(8))}</b><i>${n || ""}</i></button>`;
+    }).join("");
+    $("#aTitle").textContent = (sel === t ? "Hôm nay, " : sel === addDays(t, 1) ? "Ngày mai, " : WD[toDate(sel).getDay()] + ", ") + fmtD(sel);
+    const items = apptsOf(sel).slice().sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+    const done = items.filter(isDone);
+    const waiting = items.filter(a => !a.status || a.status === "hen").length;
+    $("#aSum").textContent = items.length ? `${waiting} khách đang hẹn · ${done.length} khách đã làm xong · đã thu ${money(done.reduce((s, a) => s + (Number(a.amount) || 0), 0))}` : "";
+    $("#aList").innerHTML = items.length ? `<div class="list">${items.map(a => apptCard(sel, a)).join("")}</div>`
+      : `<div class="list"><div class="empty">Ngày này chưa có lịch hẹn.${DB.readOnly ? "" : ` <span>Bấm <b>Đặt lịch hẹn mới</b> ở trên để thêm. Khách vào làm ngay không hẹn trước cũng đặt lịch như vậy, chọn giờ hiện tại.</span>`}</div></div>`;
+  }
+  update();
+  return { update, goto: d => { sel = d; update(); } };
+}
+
+/* ---------------- Đặt lịch / Sửa lịch / Đặt lại lịch đã hủy ---------------- */
+function apptForm({ date = today(), item = null, rebook = false } = {}) {
+  if (DB.readOnly) { toast("Bạn chỉ có quyền xem sổ này.", "bad"); return; }
+  const isEdit = !!item && !rebook;
+  const sel = item ? clone(svcList(item)).filter(x => x.sid) : [];
+  const nextSlot = (() => { const d = new Date(); d.setMinutes(d.getMinutes() + 30 - d.getMinutes() % 30, 0, 0); return `${p2(d.getHours())}:${p2(d.getMinutes())}`; })();
+  const startDate = rebook && date < today() ? today() : date;
+  const s = openSheet(rebook ? "Đặt lại lịch hẹn" : isEdit ? "Sửa lịch hẹn" : "Đặt lịch hẹn mới");
+  s.body.innerHTML = `
+    ${isEdit && (!item.status || item.status === "hen") ? `<button class="btn btn-cancel btn-block" id="fCancelAppt">${ic("x")}Hủy hẹn này (khách báo không đến)</button>` : ""}
+    <div class="field"><label for="fName">Tên khách</label><input id="fName" value="${esc(item ? item.name : "")}" autocomplete="off" placeholder="Ví dụ: Chị Lan"><span class="err" id="eName"></span></div>
+    <div class="field"><label for="fPhone">Số điện thoại</label><input id="fPhone" type="tel" inputmode="tel" value="${esc(item ? fmtPhone(normPhone(item.phone)) : "")}" autocomplete="off" placeholder="Ví dụ: 0912 345 678"><span class="err" id="ePhone"></span><span class="hint" id="hPhone">Có số thì bấm nút Gọi được ngay trong lịch hẹn.</span></div>
+    <div class="field"><span class="field-label">Khách muốn làm gì?</span><div id="fSvcs" style="display:grid;gap:12px">${svcChipsHtml(sel)}</div><span class="err" id="eSvc"></span></div>
+    <div class="grid2" style="grid-template-columns:1fr 1fr">
+      <div class="field"><label for="fDate">Ngày</label><input id="fDate" type="date" value="${startDate}"></div>
+      <div class="field"><label for="fTime">Giờ khách tới</label><input id="fTime" type="time" value="${esc(item ? item.time : nextSlot)}"><span class="err" id="eTime"></span></div>
+    </div>
+    <div class="field"><label for="fNote">Ghi chú (không bắt buộc)</label><input id="fNote" value="${esc(item ? item.note || "" : "")}" autocomplete="off" placeholder="Ví dụ: đi 2 người, muốn vẽ hoa"></div>
+    <p class="muted" id="fWarn" style="font-size:.88rem"></p>`;
+  const f = s.foot(`<button class="btn btn-line" data-close>Đóng</button><button class="btn btn-main" id="fSave">${isEdit ? "Lưu thay đổi" : "Đặt lịch"}</button>`);
+  const cBtn = $("#fCancelAppt", s.body);
+  if (cBtn) cBtn.onclick = async () => {
+    if (await confirmSheet("Hủy lịch hẹn?", `Hủy lịch của ${item.name || "khách"} lúc ${item.time} ngày ${fmtD(date)}. Sau này vẫn bấm “Đặt lại” được.`, "Hủy hẹn", true)) {
+      if (setStatus(date, item.id, "huy")) { s.close(); toast("Đã hủy lịch hẹn của " + (item.name || "khách")); }
+    }
+  };
+  if (!item) setTimeout(() => $("#fName", s.body).focus(), 80);
+
+  // Gõ số điện thoại của khách cũ thì tự điền tên
+  const phoneEl = $("#fPhone", s.body), nameEl = $("#fName", s.body);
+  phoneEl.addEventListener("input", () => {
+    const ph = normPhone(phoneEl.value);
+    const old = ph.length >= 9 && der().phones[ph];
+    $("#hPhone", s.body).textContent = old ? `Khách cũ: ${old.name}${old.done ? `, đã làm ${old.done} lần` : ""}.` : "Có số thì bấm nút Gọi được ngay trong lịch hẹn.";
+    if (old && !nameEl.value.trim()) nameEl.value = old.name;
+  });
+  $("#fSvcs", s.body).addEventListener("click", e => {
+    const b = e.target.closest("[data-sid]"); if (!b) return;
+    toggleSvc(sel, b.dataset.sid);
+    const on = sel.some(x => x.sid === b.dataset.sid);
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+    if (sel.length) $("#eSvc", s.body).textContent = "";
+  });
+  const warn = () => {
+    const d = $("#fDate", s.body).value, t = $("#fTime", s.body).value;
+    const toMin = h => { const [a, b] = h.split(":").map(Number); return a * 60 + b; };
+    const near = apptsOf(d).filter(a => (!a.status || a.status === "hen") && (!item || a.id !== item.id) && a.time && t && Math.abs(toMin(a.time) - toMin(t)) < 60);
+    $("#fWarn", s.body).textContent = near.length ? `Lưu ý: gần giờ này đã có ${near.length} khách hẹn (${near.map(a => a.time + " " + (a.name || "")).join(", ")}).` : "";
+  };
+  s.body.addEventListener("change", warn); warn();
+
+  $("#fSave", f).onclick = () => {
+    const name = nameEl.value.trim().replace(/\s+/g, " ");
+    const ph = normPhone(phoneEl.value);
+    const d = $("#fDate", s.body).value || today(), t = $("#fTime", s.body).value;
+    const badPhone = ph && (ph.length < 9 || ph.length > 11);
+    $("#eName", s.body).textContent = name ? "" : "Nhập tên khách";
+    $("#ePhone", s.body).textContent = badPhone ? "Số điện thoại chưa đúng, cần 10 số" : "";
+    $("#eSvc", s.body).textContent = sel.length ? "" : "Chọn ít nhất một việc khách muốn làm";
+    $("#eTime", s.body).textContent = t ? "" : "Chọn giờ khách tới";
+    if (!name || badPhone || !sel.length || !t) { const e = $$(".err", s.body).find(x => x.textContent); if (e) e.scrollIntoView({ block: "center", behavior: "smooth" }); return; }
+    const a = { id: item ? item.id : uid(), time: t, name, phone: ph, services: clone(sel), note: $("#fNote", s.body).value.trim(), status: "hen", created: (item && item.created) || today() };
+    // Lịch chuyển sang ngày khác thì bỏ ở ngày cũ
+    if (item && date !== d && DB.appts[date]) put("appts", date, { date, items: clone(DB.appts[date].items).filter(z => z.id !== a.id) });
+    const items = clone(apptsOf(d)).filter(z => z.id !== a.id).concat(a).sort((p, q) => (p.time || "").localeCompare(q.time || ""));
+    if (put("appts", d, { date: d, items })) {
+      s.close();
+      toast(`${isEdit ? "Đã lưu lịch" : "Đã đặt lịch"}: ${name}, ${fmtDS(d)} lúc ${t}`);
+      if (curView && curView.goto) curView.goto(d);
+    }
+  };
+}
+
+/* ---------------- Khách làm xong: ghi số tiền ---------------- */
+function doneSheet(day, id) {
+  const a = apptsOf(day).find(z => z.id === id); if (!a) return;
+  const editing = isDone(a);
+  const sel = clone(svcList(a));
+  const sumSel = () => sel.reduce((s, x) => s + (Number(x.price) || 0), 0);
+  let typed = editing; // đã tự gõ số tiền thì không tự cộng lại nữa
+  const s = openSheet((editing ? "Sửa tiền: " : "Khách làm xong: ") + (a.name || "Khách"));
+  s.body.innerHTML = `
+    <div class="field"><span class="field-label">Khách đã làm gì? (bấm để thêm hoặc bỏ)</span><div id="dSvcs" style="display:grid;gap:12px">${svcChipsHtml(sel)}</div>
+      ${sel.some(x => !x.sid) ? `<span class="hint">Lịch này có: ${esc(sel.filter(x => !x.sid).map(x => x.name).join(", "))}</span>` : ""}</div>
+    <div class="field"><label for="dAmount">Số tiền khách trả</label>
+      <input id="dAmount" class="money-in" type="text" inputmode="numeric" value="${(editing ? Number(a.amount) || 0 : sumSel()).toLocaleString("vi-VN")}">
+      <span class="hint">${editing ? "Sửa số tiền rồi bấm Lưu." : "Đã tự cộng theo bảng giá. Có giảm giá hay thêm tiền thì sửa lại số này."}</span><span class="err" id="eAmount"></span></div>
+    ${editing ? `<button class="link-btn" id="dUndo" style="justify-self:start">Chuyển lại thành “đang hẹn” (bỏ số tiền đã ghi)</button>` : ""}`;
+  const f = s.foot(`<button class="btn btn-line" data-close>Để sau</button><button class="btn btn-main" id="dSave">${ic("check")}${editing ? "Lưu số tiền" : "Lưu, cộng doanh thu"}</button>`);
+  const amt = $("#dAmount", s.body);
+  $("#dSvcs", s.body).addEventListener("click", e => {
+    const b = e.target.closest("[data-sid]"); if (!b) return;
+    toggleSvc(sel, b.dataset.sid);
+    const on = sel.some(x => x.sid === b.dataset.sid);
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+    if (!typed) amt.value = sumSel().toLocaleString("vi-VN");
+  });
+  amt.addEventListener("input", () => { typed = true; });
+  amt.addEventListener("focus", () => amt.select());
+  amt.addEventListener("blur", () => { amt.value = toInt(amt.value).toLocaleString("vi-VN"); });
+  const write = patch => {
+    const items = clone(apptsOf(day)).map(z => z.id === id ? { ...z, ...patch } : z);
+    return put("appts", day, { date: day, items });
+  };
+  $("#dSave", f).onclick = () => {
+    const n = toInt(amt.value);
+    if (!n) { $("#eAmount", s.body).textContent = "Nhập số tiền khách trả (ví dụ 150.000)"; amt.focus(); return; }
+    if (write({ status: "xong", amount: n, services: clone(sel), doneAt: new Date().toISOString() })) {
+      s.close(); toast(`Đã ghi ${money(n)} cho ${a.name || "khách"}. Tiền đã cộng vào doanh thu.`);
+    }
+  };
+  const u = $("#dUndo", s.body);
+  if (u) u.onclick = () => { if (write({ status: "hen", amount: 0, doneAt: null })) { s.close(); toast("Đã chuyển lại thành đang hẹn"); } };
+}
+
+/* ---------------- Mục DOANH THU ---------------- */
+function viewReports() {
+  const v = $("#view");
+  let per = "today", pickMonth = today().slice(0, 7);
+  v.innerHTML = `
+    <div class="page-head"><h1>Doanh thu</h1></div>
+    <div class="chips" id="rPer"></div>
+    <div class="toolbar" id="rMonthBox" hidden><label for="rMonth" class="muted" style="font-size:.88rem">Chọn tháng</label><input type="month" id="rMonth" style="min-height:42px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);padding:0 10px"></div>
+    <div id="rBody" style="display:grid;gap:20px"></div>`;
+  const PER = { today: "Hôm nay", d7: "7 ngày qua", month: "Tháng này", last: "Tháng trước", pick: "Chọn tháng" };
+  $("#rPer").onclick = e => { const b = e.target.closest("[data-p]"); if (b) { per = b.dataset.p; update(); } };
+  $("#rMonth").onchange = e => { if (e.target.value) { pickMonth = e.target.value; update(); } };
+  function range() {
+    const t = today();
+    const monthRange = ym => { const [y, m] = ym.split("-").map(Number); return [`${ym}-01`, dstr(new Date(y, m, 0))]; };
+    if (per === "today") return [t, t];
+    if (per === "d7") return [addDays(t, -6), t];
+    if (per === "month") return [t.slice(0, 8) + "01", t];
+    if (per === "last") { const d = toDate(t.slice(0, 8) + "01"); d.setDate(0); return monthRange(dstr(d).slice(0, 7)); }
+    return monthRange(pickMonth);
+  }
+  function update() {
+    $("#rPer").innerHTML = Object.entries(PER).map(([k, l]) => `<button class="chip ${per === k ? "on" : ""}" data-p="${k}">${l}</button>`).join("");
+    $("#rMonthBox").hidden = per !== "pick";
+    $("#rMonth").value = pickMonth;
+    const [from, to] = range();
+    const done = der().list.filter(x => x.day >= from && x.day <= to && isDone(x.a))
+      .sort((p, q) => (q.day + (q.a.time || "")).localeCompare(p.day + (p.a.time || "")));
+    const total = done.reduce((s, x) => s + (Number(x.a.amount) || 0), 0);
+    const rangeTxt = from === to ? fmtD(from) : `${fmtD(from)} đến ${fmtD(to)}`;
+    const body = $("#rBody");
+    if (!done.length) {
+      body.innerHTML = `<p class="muted">${rangeTxt}</p><div class="card total-card"><span>Tổng thu</span><b>0đ</b></div>
+        <div class="list"><div class="empty"><b>Chưa có khách nào làm xong trong thời gian này</b><span>Ở mục Lịch hẹn, khi khách làm xong bấm “Xong, ghi tiền”. Số tiền sẽ hiện ở đây.</span></div></div>`;
+      return;
+    }
+    // Đếm số lượt theo loại dịch vụ
+    const byG = { nail: 0, goi: 0 }, bySvc = {};
+    const groupOf = sid => (services().find(x => x.id === sid) || DEFAULT_SERVICES.find(x => x.id === sid) || {}).group;
+    done.forEach(x => {
+      const gs = new Set();
+      svcList(x.a).forEach(sv => { const g = groupOf(sv.sid); if (g) gs.add(g); bySvc[sv.name] = (bySvc[sv.name] || 0) + 1; });
+      gs.forEach(g => { byG[g]++; });
+    });
+    // Biểu đồ từng ngày khi xem nhiều ngày
+    let chart = "";
+    const days = diffDays(from, to) + 1;
+    if (days > 1) {
+      const byDay = Array.from({ length: days }, (_, i) => { const dd = addDays(from, i); return { d: dd, v: done.filter(x => x.day === dd).reduce((s, x) => s + (Number(x.a.amount) || 0), 0) }; });
+      const max = Math.max(...byDay.map(b => b.v), 1);
+      const step = [100e3, 200e3, 500e3, 1e6, 2e6, 5e6, 1e7, 2e7, 5e7, 1e8].find(st => st * 4 >= max) || 1e8;
+      const top = Math.ceil(max / step) * step;
+      const W = 660, H = 200, L = 46, B = 24, T = 14, cw = (W - L) / days;
+      const y = val => T + (H - T - B) * (1 - val / top);
+      const ticks = []; for (let k = 0; k <= top; k += step) ticks.push(k);
+      const every = days <= 10 ? 1 : days <= 16 ? 2 : 5;
+      chart = `<section class="block"><h2>Thu từng ngày</h2><div class="card" style="padding:12px;overflow-x:auto">
+        <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Biểu đồ tiền thu ${days} ngày">
+          ${ticks.map(k => `<line class="c-grid" x1="${L}" x2="${W}" y1="${y(k)}" y2="${y(k)}"/><text class="c-txt" x="${L - 6}" y="${y(k) + 4}" text-anchor="end">${k ? moneyShort(k) : "0"}</text>`).join("")}
+          ${byDay.map((b, i) => { const x = L + i * cw + cw * .16, w = cw * .68, yy = y(b.v); return `<g><title>${fmtD(b.d)}: ${money(b.v)}</title>
+            <rect class="c-bar ${b.v ? "" : "zero"}" x="${x.toFixed(1)}" y="${b.v ? yy.toFixed(1) : (y(0) - 2).toFixed(1)}" width="${w.toFixed(1)}" height="${b.v ? Math.max(2, y(0) - yy).toFixed(1) : 2}" rx="2"/>
+            ${(i % every === 0 || i === days - 1) ? `<text class="c-txt" x="${(x + w / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle">${Number(b.d.slice(8))}</text>` : ""}
+            ${days <= 10 && b.v ? `<text class="c-val" x="${(x + w / 2).toFixed(1)}" y="${(yy - 5).toFixed(1)}" text-anchor="middle">${moneyShort(b.v)}</text>` : ""}</g>`; }).join("")}
+        </svg></div><span class="muted" style="font-size:.84rem">Số dưới cột là ngày trong tháng.</span></section>`;
+    }
+    // Chi tiết: khách nào làm gì, bao nhiêu tiền, chia theo ngày
+    const dayList = [...new Set(done.map(x => x.day))];
+    const detail = dayList.map(d => {
+      const rows = done.filter(x => x.day === d);
+      const sum = rows.reduce((s, x) => s + (Number(x.a.amount) || 0), 0);
+      return `<div class="day-sum"><span>${WD[toDate(d).getDay()]}, ${fmtD(d)} · ${rows.length} khách</span><span class="num">${money(sum)}</span></div>
+        ${rows.map(x => `<div class="rv-row"><span class="t">${esc(x.a.time || "")}</span>
+          <span class="who"><b>${esc(x.a.name || "Khách")}</b><span>${esc(svcList(x.a).map(sv => sv.name).join(", ") || "Không ghi dịch vụ")}${x.a.phone ? " · " + esc(fmtPhone(normPhone(x.a.phone))) : ""}</span></span>
+          <b>${money(x.a.amount)}</b></div>`).join("")}`;
+    }).join("");
+    const topSvc = Object.entries(bySvc).sort((p, q) => q[1] - p[1]).slice(0, 6);
+    body.innerHTML = `
+      <p class="muted">${rangeTxt}</p>
+      <div class="card total-card"><span>Tổng thu</span><b>${money(total)}</b><span>${done.length} lượt khách · trung bình ${money(total / done.length)}/khách</span></div>
+      <div class="kpis" style="grid-template-columns:1fr 1fr">
+        <div class="kpi"><span>Làm móng</span><b>${byG.nail} lượt</b></div>
+        <div class="kpi"><span>Gội đầu</span><b>${byG.goi} lượt</b></div>
+      </div>
+      <section class="block"><h2>Chi tiết từng khách</h2><div class="list">${detail}</div></section>
+      ${chart}
+      ${topSvc.length ? `<section class="block"><h2>Dịch vụ khách làm nhiều</h2><div class="list">${topSvc.map(([n, c]) => `<div class="hbar"><span>${esc(n)}</span><div class="track"><i style="width:${Math.max(4, c / topSvc[0][1] * 100)}%"></i></div><b>${c} lần</b></div>`).join("")}</div></section>` : ""}`;
+  }
+  update();
+  return { update };
+}
+
+/* ---------------- Mục CÀI ĐẶT: bảng giá Làm móng, Gội đầu ---------------- */
+function viewSettings() {
+  const v = $("#view");
+  let draft = clone(services());
+  let dirty = false;
+  v.innerHTML = `<div class="page-head"><h1>Cài đặt</h1></div><div id="sBody" style="display:grid;gap:16px"></div>`;
+  function draw() {
+    const ro = DB.readOnly ? "disabled" : "";
+    let lastBk = null; try { lastBk = localStorage.getItem(LS_KEY + "-backup"); } catch (e) {}
+    $("#sBody").innerHTML = `
+      <p class="muted" style="font-size:.92rem">Sửa tên dịch vụ và giá cho đúng với tiệm, rồi bấm <b>Lưu bảng giá</b>. Giá mới áp dụng cho những lịch đặt sau khi lưu.</p>
+      ${Object.entries(GROUPS).map(([g, gl]) => `<section class="card set-sec"><h2>${gl}</h2>
+        ${draft.map((sv, k) => sv.group !== g ? "" : `<div class="svc-edit">
+          <input data-sn="${k}" value="${esc(sv.name)}" placeholder="Tên dịch vụ" aria-label="Tên dịch vụ" ${ro}>
+          <input class="price" data-sp="${k}" type="text" inputmode="numeric" value="${(Number(sv.price) || 0).toLocaleString("vi-VN")}" aria-label="Giá ${esc(sv.name)}" ${ro}>
+          <button class="del" data-sdel="${k}" aria-label="Xóa ${esc(sv.name || "dịch vụ")}" ${ro}>${ic("trash")}</button>
+        </div>`).join("") || `<p class="muted">Chưa có dịch vụ nào.</p>`}
+        ${ro ? "" : `<button class="btn btn-soft" data-sadd="${g}" style="justify-self:start">${ic("plus")}Thêm dịch vụ ${gl.toLowerCase()}</button>`}
+      </section>`).join("")}
+      ${ro ? "" : `<button class="btn btn-main btn-block add-big" id="sSave">${ic("check")}Lưu bảng giá</button>`}
+      <section class="card set-sec"><h2>Sao lưu dữ liệu</h2>
+        <p class="muted" style="font-size:.9rem">${DB.mode === "cloud" ? "Sổ đang lưu chung trên mạng. Thỉnh thoảng nên tải một file sao lưu để cất giữ." : `Sổ đang lưu trong máy này. Đổi máy hoặc xóa dữ liệu trình duyệt sẽ mất sổ, nên hãy tải file sao lưu mỗi tuần. ${lastBk ? "Lần gần nhất: " + fmtD(lastBk) + "." : "Bạn chưa sao lưu lần nào."}`}</p>
+        <div class="btn-row"><button class="btn btn-ink" data-backup>Tải file sao lưu</button>${ro ? "" : `<button class="btn btn-line" data-restore>Khôi phục từ file</button>`}</div>
+      </section>`;
+  }
+  const readDraft = () => {
+    $$("[data-sn]", v).forEach(i => { draft[i.dataset.sn].name = i.value; });
+    $$("[data-sp]", v).forEach(i => { draft[i.dataset.sp].price = toInt(i.value); });
+  };
+  v.addEventListener("input", () => { dirty = true; });
+  v.addEventListener("focusout", e => { if (e.target.dataset && e.target.dataset.sp !== undefined) e.target.value = toInt(e.target.value).toLocaleString("vi-VN"); });
+  v.addEventListener("click", async e => {
+    const b = e.target.closest("button"); if (!b || !v.contains(b)) return;
+    if (b.dataset.sadd) {
+      readDraft(); draft.push({ id: "s" + uid(), group: b.dataset.sadd, name: "", price: 0 }); dirty = true; draw();
+      const empty = $$("[data-sn]", v).find(i => !i.value); if (empty) empty.focus();
+    }
+    if (b.dataset.sdel !== undefined) {
+      readDraft();
+      const k = Number(b.dataset.sdel), sv = draft[k];
+      if (sv.name && !(await confirmSheet(`Xóa “${sv.name}”?`, "Dịch vụ này sẽ không hiện khi đặt lịch nữa. Các lịch cũ đã ghi vẫn giữ nguyên.", "Xóa dịch vụ", true))) return;
+      draft.splice(k, 1); dirty = true; draw();
+      toast("Đã bỏ dịch vụ. Nhớ bấm “Lưu bảng giá”.");
+    }
+    if (b.id === "sSave") {
+      readDraft();
+      const bad = draft.find(sv => sv.name.trim() && !sv.price);
+      if (bad) { toast(`“${bad.name}” chưa có giá. Điền giá rồi lưu lại.`, "bad"); return; }
+      const clean = draft.filter(sv => sv.name.trim()).map(sv => ({ id: sv.id, group: sv.group, name: sv.name.trim(), price: Number(sv.price) || 0 }));
+      if (put("config", "main", { ...(DB.config || {}), services: clean })) {
+        draft = clone(clean); dirty = false; draw();
+        toast(`Đã lưu bảng giá: ${clean.filter(x => x.group === "nail").length} dịch vụ làm móng, ${clean.filter(x => x.group === "goi").length} dịch vụ gội đầu`);
+      }
+    }
+    if (b.hasAttribute("data-restore")) $("#fileIn").click();
+  });
+  draw();
+  // Bảng giá đổi từ máy khác thì vẽ lại, trừ khi đang sửa dở
+  return { update: () => { if (!dirty) { draft = clone(services()); draw(); } } };
+}
+
+/* ---------------- Sao lưu, khôi phục ---------------- */
+async function backup() {
+  const data = { app: "so-hen-tiem", version: 2, exportedAt: new Date().toISOString(), config: DB.config, appts: DB.appts };
+  if (await saveFile(`sao-luu-so-hen-${today()}.json`, JSON.stringify(data), "application/json")) {
+    try { localStorage.setItem(LS_KEY + "-backup", today()); } catch (e) {}
+    toast("Đã tải file sao lưu. Hãy cất file vào Zalo Cloud, Google Drive hoặc gửi cho chính mình.");
+    changed();
+  }
+}
+$("#fileIn").addEventListener("change", e => {
+  const file = e.target.files[0]; e.target.value = "";
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = async () => {
+    let o; try { o = JSON.parse(r.result); } catch (err) { o = null; }
+    if (!o || o.app !== "so-hen-tiem" || typeof o.appts !== "object") { toast("File này không phải file sao lưu của sổ hẹn.", "bad"); return; }
+    const nD = Object.keys(o.appts || {}).length;
+    const nA = Object.values(o.appts || {}).reduce((s, d) => s + ((d && d.items) || []).length, 0);
+    if (!(await confirmSheet("Khôi phục từ file sao lưu?", `File có ${nA} lịch hẹn trong ${nD} ngày. Những ngày có trong file sẽ được thay bằng bản trong file, các ngày khác giữ nguyên.`, "Khôi phục"))) return;
+    if (DB.mode === "local") {
+      DB.appts = { ...DB.appts, ...(o.appts || {}) };
+      if (o.config) DB.config = o.config;
+      changed(); localSave();
+    } else {
+      const jobs = Object.entries(o.appts || {}).map(([id, d]) => ["appts", id, d]);
+      if (o.config) jobs.push(["config", "main", o.config]);
+      toast("Đang khôi phục, đừng đóng trang…");
+      for (let i = 0; i < jobs.length; i++) { put(...jobs[i]); if (i % 10 === 9) await sleep(250); }
+      await Promise.all(Object.values(queues)).catch(() => {});
+    }
+    toast(`Đã khôi phục ${nA} lịch hẹn`);
+  };
+  r.readAsText(file);
+});
+
+/* ---------------- Bấm chung ---------------- */
+function findRef(ref) { const [day, id] = ref.split("|"); return { day, id, a: apptsOf(day).find(z => z.id === id) }; }
+function setStatus(day, id, status) {
+  const items = clone(apptsOf(day)).map(z => z.id === id ? { ...z, status } : z);
+  return put("appts", day, { date: day, items });
+}
+document.addEventListener("click", async e => {
+  const t = e.target;
+  const goB = t.closest("[data-go]"); if (goB) { go(goB.dataset.go); return; }
+  const cp = t.closest("[data-copy]"); if (cp) { copyText(cp.dataset.copy); return; }
+  if (t.closest("[data-backup]")) { backup(); return; }
+  const dn = t.closest("[data-done]"); if (dn) { const r = findRef(dn.dataset.done); if (r.a) doneSheet(r.day, r.id); return; }
+  const ed = t.closest("[data-edit]"); if (ed) { const r = findRef(ed.dataset.edit); if (r.a) apptForm({ date: r.day, item: r.a }); return; }
+  const rb = t.closest("[data-rebook]"); if (rb) { const r = findRef(rb.dataset.rebook); if (r.a) apptForm({ date: r.day, item: r.a, rebook: true }); return; }
+  const cc = t.closest("[data-cancel]");
+  if (cc) {
+    const r = findRef(cc.dataset.cancel); if (!r.a) return;
+    if (await confirmSheet("Hủy lịch hẹn?", `Hủy lịch của ${r.a.name || "khách"} lúc ${r.a.time} ngày ${fmtD(r.day)}. Sau này vẫn bấm “Đặt lại” được.`, "Hủy hẹn", true))
+      if (setStatus(r.day, r.id, "huy")) toast("Đã hủy lịch hẹn");
+    return;
+  }
+  const dl = t.closest("[data-del]");
+  if (dl) {
+    const r = findRef(dl.dataset.del); if (!r.a) return;
+    if (await confirmSheet("Xóa hẳn lịch này?", `Lịch của ${r.a.name || "khách"} sẽ bị xóa khỏi sổ, không lấy lại được.`, "Xóa", true)) {
+      if (put("appts", r.day, { date: r.day, items: clone(apptsOf(r.day)).filter(z => z.id !== r.id) })) toast("Đã xóa lịch");
+    }
+  }
+});
+
+/* ---------------- Khởi động ---------------- */
+async function init() {
+  $("#shopName").textContent = SHOP;
+  renderTabs();
+  let db = null;
+  const hasClaude = !!(window.claude && typeof window.claude.use === "function");
+  if (hasClaude) { try { db = await window.claude.use("db"); } catch (e) { db = null; } }
+  if (db) {
+    await startCloud(db);
+    try { const user = await window.claude.use("user"); if (user && typeof user.can === "function") { const w = await user.can("data.write"); if (w === false) DB.readOnly = true; } } catch (e) {}
+    try { downloads = await window.claude.use("downloads"); } catch (e) { downloads = null; }
+  } else {
+    DB.mode = "local"; DB.cloudMissing = hasClaude;
+    try { localStorage.setItem(LS_KEY + "-test", "1"); localStorage.removeItem(LS_KEY + "-test"); } catch (e) { DB.storageBroken = true; }
+    localLoad();
+  }
+  ready = true; DER = null;
+  setSave("ok");
+  route();
+}
+init();
+})();
+
+</script>
+</body>
+</html>
